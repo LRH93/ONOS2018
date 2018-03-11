@@ -27,4 +27,8 @@
 /onos-1.6.0/*
 !/onos-1.6.0/apps/
 /onos-1.6.0/apps/*
-!/onos-1.6.0/apps/fwd
+!/onos-1.6.0/apps/fwd/
+
+!/onos-1.6.0/providers/
+/onos-1.6.0/providers/*
+!/onos-1.6.0/providers/bmv2/
