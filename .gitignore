@@ -32,3 +32,11 @@
 !/onos-1.6.0/providers/
 /onos-1.6.0/providers/*
 !/onos-1.6.0/providers/bmv2/
+
+!/onos-1.6.0/drivers/
+/onos-1.6.0/drivers/*
+!/onos-1.6.0/drivers/bmv2/
+
+!/onos-1.6.0/protocols/
+/onos-1.6.0/protocols/*
+!/onos-1.6.0/protocols/bmv2/
