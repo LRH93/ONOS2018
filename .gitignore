@@ -23,3 +23,8 @@
 /click-2.0.1/elements/*
 !/click-2.0.1/elements/local/
 
+!/onos-1.6.0/
+/onos-1.6.0/*
+!/onos-1.6.0/apps/
+/onos-1.6.0/apps/*
+!/onos-1.6.0/apps/fwd
