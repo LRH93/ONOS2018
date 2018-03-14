@@ -423,7 +423,7 @@
     "meter_arrays": [],
     "actions": [
         {
-            "name": "_drop",
+            "name": "send_to_cpu",
             "id": 0,
             "runtime_data": [],
             "primitives": [
@@ -439,14 +439,14 @@
                         },
                         {
                             "type": "hexstr",
-                            "value": "0x1ff"
+                            "value": "0xff"
                         }
                     ]
                 }
             ]
         },
         {
-            "name": "send_to_cpu",
+            "name": "_drop",
             "id": 1,
             "runtime_data": [],
             "primitives": [
@@ -462,7 +462,7 @@
                         },
                         {
                             "type": "hexstr",
-                            "value": "0xff"
+                            "value": "0x1ff"
                         }
                     ]
                 }

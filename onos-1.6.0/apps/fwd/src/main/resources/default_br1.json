@@ -462,8 +462,31 @@
     "meter_arrays": [],
     "actions": [
         {
-            "name": "set_ip",
+            "name": "send_to_cpu",
             "id": 0,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "set_ip",
+            "id": 1,
             "runtime_data": [
                 {
                     "name": "ip",
@@ -484,29 +507,6 @@
                         {
                             "type": "runtime_data",
                             "value": 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "send_to_cpu",
-            "id": 1,
-            "runtime_data": [],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "standard_metadata",
-                                "egress_spec"
-                            ]
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xff"
                         }
                     ]
                 }

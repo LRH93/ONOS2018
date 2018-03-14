@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1521032627046
+Bnd-LastModified: 1521037920630
 Build-Jdk: 1.8.0_121
 Built-By: root
 Bundle-Description: ONOS BMv2 packet provider
