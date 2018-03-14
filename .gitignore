@@ -1,6 +1,6 @@
 /*
 !.gitignore
-
+!README.md
 !/ceshi/
 /ceshi/*
 !/ceshi/ceshi2/
