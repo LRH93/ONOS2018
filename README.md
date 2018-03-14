@@ -2,11 +2,15 @@
 
 以下是 .bashrc 的内容
 
-export JAVA_HOME=/root/onos/Applications/jdk1.8.0_121
-export JRE_HOME=$JAVA_HOME/jre
-export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
-export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
-echo “Java has been installed”
+		export JAVA_HOME=/root/onos/Applications/jdk1.8.0_121
+		
+		export JRE_HOME=$JAVA_HOME/jre
+		
+		export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
+		
+		export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+
+		echo “Java has been installed”
 
 export KARAF_ROOT=/root/onos/Applications/apache-karaf-3.0.5
 export PATH=$KARAF_ROOT/bin:$PATH
