@@ -462,36 +462,8 @@
     "meter_arrays": [],
     "actions": [
         {
-            "name": "set_egress_port",
-            "id": 0,
-            "runtime_data": [
-                {
-                    "name": "port",
-                    "bitwidth": 9
-                }
-            ],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "standard_metadata",
-                                "egress_spec"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "name": "set_ip",
-            "id": 1,
+            "id": 0,
             "runtime_data": [
                 {
                     "name": "ip",
@@ -519,7 +491,7 @@
         },
         {
             "name": "send_to_cpu",
-            "id": 2,
+            "id": 1,
             "runtime_data": [],
             "primitives": [
                 {
@@ -535,6 +507,34 @@
                         {
                             "type": "hexstr",
                             "value": "0xff"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "set_egress_port",
+            "id": 2,
+            "runtime_data": [
+                {
+                    "name": "port",
+                    "bitwidth": 9
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
                         }
                     ]
                 }

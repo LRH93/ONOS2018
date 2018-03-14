@@ -1,4 +1,3 @@
-*.jar
 /*
 !.gitignore
 
@@ -42,4 +41,3 @@
 /onos-1.6.0/protocols/*
 !/onos-1.6.0/protocols/bmv2/
 
-*.jar

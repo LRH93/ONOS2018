@@ -439,36 +439,8 @@
             ]
         },
         {
-            "name": "set_egress_port",
-            "id": 2,
-            "runtime_data": [
-                {
-                    "name": "port",
-                    "bitwidth": 9
-                }
-            ],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "standard_metadata",
-                                "egress_spec"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "name": "set_flag",
-            "id": 3,
+            "id": 2,
             "runtime_data": [
                 {
                     "name": "flag",
@@ -484,6 +456,34 @@
                             "value": [
                                 "routing_metadata",
                                 "flag"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "set_egress_port",
+            "id": 3,
+            "runtime_data": [
+                {
+                    "name": "port",
+                    "bitwidth": 9
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
                             ]
                         },
                         {

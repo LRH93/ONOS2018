@@ -456,31 +456,8 @@
             ]
         },
         {
-            "name": "send_to_cpu",
-            "id": 2,
-            "runtime_data": [],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "standard_metadata",
-                                "egress_spec"
-                            ]
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xff"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "name": "set_egress_port",
-            "id": 3,
+            "id": 2,
             "runtime_data": [
                 {
                     "name": "port",
@@ -501,6 +478,29 @@
                         {
                             "type": "runtime_data",
                             "value": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "send_to_cpu",
+            "id": 3,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff"
                         }
                     ]
                 }
