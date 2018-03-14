@@ -98,11 +98,11 @@ down(){
 }
 
 p4demo(){
-	sudo python	/root/ONOS1.6.0/onos-1.6.0/apps/fwd/demo.py
+	python	/root/ONOS1.6.0/onos-1.6.0/apps/fwd/demo.py
 }
 
 p4topo(){
-	sudo python	/root/onos-p4-dev/p4src/topo.py
+	python	/root/ONOS1.6.0/onos-1.6.0/apps/fwd/topo.py
 }
 
 p4onos() {
@@ -114,7 +114,6 @@ p4onos() {
 
 	compile IR
 	compile AR
-	compile RM
 
 	#拷贝配置文件
 	cd $onos_p4_dev_ROOT/p4src
@@ -131,8 +130,8 @@ p4onos() {
 
 	cd $ONOS_ROOT/apps/fwd
 	mvn clean install -DskipTests -Dcheckstyle.skip
-	#cd $ONOS_ROOT/core/net
-	#mvn clean install -DskipTests -Dcheckstyle.skip
+	cd $ONOS_ROOT/core/net
+	mvn clean install -DskipTests -Dcheckstyle.skip
 
 	cd
 	echo "BMv2 ok!"
@@ -179,17 +178,13 @@ bmv2(){
 		$onos_p4_dev_ROOT/onos-bmv2/targets/simple_switch/simple_switch --device-id 6 -i 1@RM2-eth1 -i 2@RM2-eth2 --thrift-port $1 --nanolog ipc:///tmp/bmv2-6-log.ipc --debugger --log-console -Lwarn $onos_p4_dev_ROOT/p4src/build/empty.json -- --controller-ip 127.0.0.1 --controller-port 40123
 	fi
 }
-
-
-python $onos_p4_dev_ROOT/tools/create_bmv2_function.py $onos_p4_dev_ROOT
 #此动作会覆盖上面的函数
-source $onos_p4_dev_ROOT/tools/bmv2_functionX.sh
+source $onos_p4_dev_ROOT/tools/bmv2_function.sh
 
 fwd(){
 	cd $ONOS_ROOT/apps/fwd
 	mvn clean install
-	onos-app localhost reinstall target/onos-app-fwd-1.6.0.oar
-	onos-app localhost activate org.onosproject.fwd
+	onos-app localhost reinstall target/onos-app-fwd-1.6.0.oar 
 }
 
 core() {
@@ -206,6 +201,10 @@ log(){
 #xterm小窗发包麻烦，写成脚本
 clicksend(){
 	cd /home/click-2.0.1
-	userlevel/click color/$1."click"
+	userlevel/click color/$1
+}
+ clicksend(){
+	cd /home/click-2.0.1
+	userlevel/click color/$1
 }
 

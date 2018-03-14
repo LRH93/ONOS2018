@@ -4,28 +4,42 @@
 #include "include/actions.p4"
 #include "include/port_counters.p4"
 
-table table0 {
+table fwd {
     reads {
         standard_metadata.ingress_port : ternary;
         ethernet.dstAddr : ternary;
         ethernet.srcAddr : ternary;
         ethernet.etherType : ternary;
+        ipv4.dstAddr : ternary;
     }
     actions {
         set_egress_port;
         send_to_cpu;
         _drop;
     }
-    support_timeout: true;
+    //support_timeout: false;
 }
 
 counter table0_counter {
     type: packets;
-    direct: table0;
+    direct: fwd;
     min_width : 32;
 }
 
+table table1 {
+    reads {
+        ipv4.dstAddr : lpm;
+    }
+    actions {
+        set_egress_port;
+        send_to_cpu;
+        _drop;
+    }
+    //support_timeout: false;
+}
+
 control ingress {
-    apply(table0);
-    process_port_counters();
+    apply(fwd);
+    apply(table1);
+    //process_port_counters();
 }
