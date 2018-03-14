@@ -84,7 +84,7 @@ def main():
     print "_____liuruohan_____"
     net = Mininet(topo=None, build=False)
 
-    fname = "/root/onos-p4-dev/p4src/config.json"
+    fname = "/root/onos/onos-p4-dev/p4src/config.json"
 
     try:
         fobj = open(fname, "r");

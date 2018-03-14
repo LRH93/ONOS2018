@@ -97,12 +97,8 @@ down(){
 	ip link delete $1 type veth
 }
 
-p4demo(){
-	sudo python	/root/ONOS1.6.0/onos-1.6.0/apps/fwd/demo.py
-}
-
 p4topo(){
-	sudo python	/root/onos-p4-dev/p4src/topo.py
+	sudo python	$onos_p4_dev_ROOT/p4src/topo.py
 }
 
 p4onos() {
@@ -118,9 +114,9 @@ p4onos() {
 
 	#拷贝配置文件
 	cd $onos_p4_dev_ROOT/p4src
-	scp config.json /root/ONOS1.6.0/onos-1.6.0/protocols/bmv2/ctl/src/main/resources/config.json
-	scp config.json /root/ONOS1.6.0/onos-1.6.0/apps/fwd/src/main/resources/config.json	
-	scp config.json /root/ONOS1.6.0/onos-1.6.0/drivers/bmv2/src/main/resources/config.json
+	scp config.json $ONOS_ROOT/protocols/bmv2/ctl/src/main/resources/config.json
+	scp config.json $ONOS_ROOT/apps/fwd/src/main/resources/config.json	
+	scp config.json $ONOS_ROOT/drivers/bmv2/src/main/resources/config.json
 
 	cd $ONOS_ROOT/protocols/bmv2
 	mvn clean install -DskipTests -Dcheckstyle.skip
@@ -199,13 +195,13 @@ core() {
 }
 
 log(){
-	cd /root/ONOS1.6.0/Applications/karaf/apache-karaf-3.0.8
+	cd /root/onos/karaf/apache-karaf-3.0.8
 	tailf data/log/karaf.log
 }
 
 #xterm小窗发包麻烦，写成脚本
 clicksend(){
-	cd /home/click-2.0.1
+	cd /root/onos/click-2.0.1
 	userlevel/click color/$1."click"
 }
 
