@@ -1,0 +1,41 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1520985070922
+Build-Jdk: 1.8.0_121
+Built-By: root
+Bundle-Description: Device drivers for p4.org reference softswitch BMv2
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: onos-drivers-bmv2
+Bundle-SymbolicName: org.onosproject.onos-drivers-bmv2
+Bundle-Version: 1.6.0
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.onosproject.drivers.bmv2;uses:="org.onosproject.net,
+ org.onosproject.net.behaviour,org.onosproject.net.device,org.onosprojec
+ t.net.driver,org.onosproject.net.flow,org.onosproject.net.flow.criteria
+ ,org.onosproject.net.flow.instructions,org.onosproject.net.flowobjectiv
+ e,org.onosproject.net.packet";version="1.6.0"
+Import-Package: 
+ com.eclipsesource.json;version="[0.9,1)",
+ com.google.common.collect;version="[19.0,20)",
+ org.apache.commons.lang3.tuple;version="[3.4,4)",
+ org.onlab.osgi;version="[1.6,2)",
+ org.onlab.packet;version="[1.6,2)",
+ org.onlab.util;version="[1.6,2)",
+ org.onosproject.bmv2.api.context;version="[1.6,2)",
+ org.onosproject.bmv2.api.runtime;version="[1.6,2)",
+ org.onosproject.bmv2.api.service;version="[1.6,2)",
+ org.onosproject.driver.pipeline;version="[1.6,2)",
+ org.onosproject.net;version="[1.6,2)",
+ org.onosproject.net.behaviour;version="[1.6,2)",
+ org.onosproject.net.device;version="[1.6,2)",
+ org.onosproject.net.driver;version="[1.6,2)",
+ org.onosproject.net.flow;version="[1.6,2)",
+ org.onosproject.net.flow.criteria;version="[1.6,2)",
+ org.onosproject.net.flow.instructions;version="[1.6,2)",
+ org.onosproject.net.flowobjective;version="[1.6,2)",
+ org.onosproject.net.packet;version="[1.6,2)",
+ org.slf4j;version="[1.7,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Service-Component: OSGI-INF/org.onosproject.drivers.bmv2.Bmv2DriversLoad
+ er.xml
+Tool: Bnd-3.0.0.201509101326

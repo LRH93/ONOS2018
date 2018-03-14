@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -87,6 +88,9 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     private Bmv2Controller controller;
 
+    //TODO:控制打印的次数，以免影响输入！
+    public int printTime = 4;
+
     private final ScheduledExecutorService scheduledExecutor = SharedScheduledExecutors.getPoolThreadExecutor();
     private final MapEventListener<DeviceId, Bmv2DeviceContext> contextListener = new ContextMapEventListener();
     private final ConcurrentMap<DeviceId, Lock> deviceLocks = Maps.newConcurrentMap();
@@ -94,7 +98,7 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
     private ConsistentMap<DeviceId, Bmv2DeviceContext> contexts;
     private Map<String, ClassLoader> interpreterClassLoaders;
     private Bmv2DeviceContext defaultContext;
-    private  ScheduledFuture<?> configChecker = null;
+    private ScheduledFuture<?> configChecker = null;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -119,11 +123,13 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
 
         contexts.addListener(contextListener, scheduledExecutor);
 
-        if (configChecker != null &&  configChecker.isCancelled()) {
+        //configChecker.cancel(true);
+
+        if (configChecker != null && configChecker.isCancelled()) {
             configChecker.cancel(false);
         }
         configChecker = scheduledExecutor.scheduleAtFixedRate(this::checkDevices, 0, CHECK_INTERVAL,
-                                                              TimeUnit.MILLISECONDS);
+                TimeUnit.MILLISECONDS);
 
         log.info("Started");
     }
@@ -150,11 +156,14 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
         checkNotNull(context, "context cannot be null");
         if (!interpreterClassLoaders.containsKey(context.interpreter().getClass().getName())) {
             log.error("Unable to set context, missing class loader for interpreter '{}'. " +
-                              "Please register it with registerInterpreterClassLoader()",
-                      context.interpreter().getClass().getName());
+                            "Please register it with registerInterpreterClassLoader()",
+                    context.interpreter().getClass().getName());
         } else {
             try {
                 contexts.put(deviceId, context);
+
+                System.out.println("\n***************\n+put+\n***************\n");
+
             } catch (ConsistentMapException.ConcurrentModification e) {
                 log.error("Detected concurrent modification on context map");
             }
@@ -173,6 +182,58 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
 
     @Override
     public void setDefaultContext(DeviceId deviceId) {
+
+        //System.out.println("\n***************\n+put+\n***************\n");
+        //TODO:重大修改！
+        //TODO:在默认的版本中，所有的device都被填成了default.json的文件，现在，我们对这个函数就行直接修改，不是很科学，但是更加直接！
+        Bmv2DeviceContext COLOR_defaultContext;
+
+        Bmv2Configuration defaultConfiguration=loadDefaultConfiguration();
+
+        String FileName = "/config.json";
+        try {
+            JsonObject json = Json.parse(new BufferedReader(new InputStreamReader(
+                    this.getClass().getResourceAsStream(FileName)))).asObject();
+
+            JsonObject defaultJson = json.get("defaultJson").asObject();
+            List<String> deviceStrings = defaultJson.names();
+
+            if (deviceStrings.contains(deviceId.toString())){
+                defaultConfiguration = loadDefaultConfiguration(defaultJson.get(deviceId.toString()).asString());
+                System.out.println("[protocals:Bmv2DeviceContextServiceImpl]"+deviceId.toString()+" >>>>loading<<<< "+defaultJson.get(deviceId.toString()).asString());
+            }
+
+        }catch (Exception e){
+            System.out.println("setDefaultContext"+e.toString());
+        }
+
+/*
+        //TODO:之前没有这一段逻辑
+        if(deviceId.toString().equals("bmv2:127.0.0.1:41001#3")){
+            defaultConfiguration = loadDefaultConfiguration("/default_rm1.json");
+        }else if(deviceId.toString().equals("bmv2:127.0.0.1:41002#4")){
+            defaultConfiguration = loadDefaultConfiguration("/default_br1.json");
+        }else if(deviceId.toString().equals("bmv2:127.0.0.1:41003#5")){
+            defaultConfiguration = loadDefaultConfiguration("/default_br2.json");
+        }else if(deviceId.toString().equals("bmv2:127.0.0.1:41004#6")){
+            defaultConfiguration = loadDefaultConfiguration("/default_rm2.json");
+        }
+*/
+        Bmv2Interpreter defaultInterpreter = new Bmv2DefaultInterpreterImpl();
+        COLOR_defaultContext = new Bmv2DeviceContext(defaultConfiguration, defaultInterpreter);
+
+        Versioned<Bmv2DeviceContext> previous = contexts.put(deviceId, COLOR_defaultContext);
+        if (mastershipService.getMasterFor(deviceId) == null) {
+            // Checking for who is the master here is ugly but necessary, as this method is called by Bmv2DeviceProvider
+            // prior to master election. A solution could be to use a separate leadership contest instead of the
+            // mastership service.
+            triggerConfigCheck(deviceId, COLOR_defaultContext);
+        }
+    }
+
+    //TODO:原来版本的函数-备份
+/*    @Override
+    public void setDefaultContext(DeviceId deviceId) {
         Versioned<Bmv2DeviceContext> previous = contexts.put(deviceId, defaultContext);
         if (mastershipService.getMasterFor(deviceId) == null) {
             // Checking for who is the master here is ugly but necessary, as this method is called by Bmv2DeviceProvider
@@ -180,7 +241,20 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
             // mastership service.
             triggerConfigCheck(deviceId, defaultContext);
         }
+    }*/
+
+
+    //TODO:根据json文件的名字加载到 Bmv2DefaultConfiguration中
+    public Bmv2DefaultConfiguration loadDefaultConfiguration(String jsonName) {
+        try {
+            JsonObject json = Json.parse(new BufferedReader(new InputStreamReader(
+                    Bmv2DeviceContextServiceImpl.class.getResourceAsStream(jsonName)))).asObject();
+            return parse(json);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load default configuration", e);
+        }
     }
+
 
     private void configCheck(DeviceId deviceId, Bmv2DeviceContext storedContext) {
         if (storedContext == null) {
@@ -197,11 +271,62 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
                 String jsonString = controller.getAgent(deviceId).dumpJsonConfig();
                 Bmv2Configuration deviceConfiguration = parse(Json.parse(jsonString).asObject());
 
-                if (!storedContext.configuration().equals(deviceConfiguration)) {
+                Bmv2Configuration neededConfiguration = storedContext.configuration();
+
+           /*     if (printTime > 0) {
+
+                    System.out.printf("--check--");
+                    System.out.println(deviceId.toString());
+
+                    if (deviceId.toString().equals("bmv2:127.0.0.1:40001#1")) {
+                        //改成rm
+                        System.out.println("Rm");
+                        neededConfiguration = loadDefaultConfiguration("/default_rm.json");
+                        System.out.println("over");
+
+                    } else if (deviceId.toString().equals("bmv2:127.0.0.1:40002#2")) {
+                        //改成br
+                        System.out.println("Br");
+                        neededConfiguration = loadDefaultConfiguration("/default_br.json");
+                        System.out.println("over");
+
+                    } else {
+                        //不变
+                        System.out.println("Not found");
+                        }
+                    //TODO:次数减1
+                    printTime--;
+                } else {
+                    if (deviceId.toString().equals("bmv2:127.0.0.1:40001#1")) {
+                        //改成rm
+                        // System.out.println("Rm");
+                        neededConfiguration = loadDefaultConfiguration("/default_rm.json");
+                        //System.out.println("over");
+
+                    } else if (deviceId.toString().equals("bmv2:127.0.0.1:40002#2")) {
+                        //改成br
+                        //System.out.println("Br");
+                        neededConfiguration = loadDefaultConfiguration("/default_br.json");
+                        //System.out.println("over");
+
+                    } else {
+                        //不变
+                        //System.out.println("Not found");
+                    }
+                }
+*/
+                if (!neededConfiguration.equals(deviceConfiguration)) {
                     log.info("Triggering configuration swap on {}...", deviceId);
                     try {
                         Bmv2DeviceAgent agent = controller.getAgent(deviceId);
-                        String newJsonString = storedContext.configuration().json().toString();
+
+                        //System.out.println("____controller____");
+                        //System.out.println(controller.toString());
+
+                        //System.out.println("____deviceId____");
+                        System.out.println(deviceId.toString());
+
+                        String newJsonString = neededConfiguration.json().toString();
                         agent.uploadNewJsonConfig(newJsonString);
                         agent.swapJsonConfig();
                     } catch (Bmv2RuntimeException e) {
@@ -217,7 +342,7 @@ public class Bmv2DeviceContextServiceImpl implements Bmv2DeviceContextService {
     }
 
     private void triggerConfigCheck(DeviceId deviceId, Bmv2DeviceContext context) {
-            scheduledExecutor.schedule(() -> configCheck(deviceId, context), 0, TimeUnit.SECONDS);
+        scheduledExecutor.schedule(() -> configCheck(deviceId, context), 0, TimeUnit.SECONDS);
     }
 
     private void checkDevices() {

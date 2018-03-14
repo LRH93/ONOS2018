@@ -46,6 +46,8 @@ import org.onosproject.bmv2.thriftapi.BmMtEntry;
 import org.onosproject.bmv2.thriftapi.SimpleSwitch;
 import org.onosproject.bmv2.thriftapi.Standard;
 import org.onosproject.net.DeviceId;
+import org.onosproject.net.flow.DefaultFlowRule;
+import org.onosproject.net.flow.criteria.ExtensionCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +102,9 @@ public final class Bmv2DeviceThriftClient implements Bmv2DeviceAgent {
     public final long addTableEntry(Bmv2TableEntry entry) throws Bmv2RuntimeException {
 
         log.debug("Adding table entry... > deviceId={}, entry={}", deviceId, entry);
+        //System.out.println(this.getClass());
+        //System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName());
+        //System.out.println("Adding table entry... > deviceId={}, entry={}"+deviceId+entry);
 
         long entryId = -1;
 
@@ -217,6 +222,7 @@ public final class Bmv2DeviceThriftClient implements Bmv2DeviceAgent {
             throw parseTException(e);
         }
     }
+
 
     @Override
     public List<Bmv2ParsedTableEntry> getTableEntries(String tableName) throws Bmv2RuntimeException {
@@ -402,6 +408,8 @@ public final class Bmv2DeviceThriftClient implements Bmv2DeviceAgent {
         log.debug("Loading new JSON config on device... > deviceId={}, jsonStringLength={}",
                   deviceId, jsonString.length());
 
+        System.out.println("uploadNewJsonConfig");
+        System.out.println("/root/ONOS1.6.0/onos-1.6.0/protocols/bmv2/ctl/src/main/java/org/onosproject/bmv2/ctl/Bmv2DeviceThriftClient.java");
         try {
             standardClient.bm_load_new_config(jsonString);
             log.debug("JSON config loaded! > deviceId={}", deviceId);

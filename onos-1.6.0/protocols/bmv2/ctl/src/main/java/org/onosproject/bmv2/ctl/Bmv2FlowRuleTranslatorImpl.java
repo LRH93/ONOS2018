@@ -46,6 +46,10 @@ import org.onosproject.net.flow.TrafficTreatment;
 import org.onosproject.net.flow.criteria.Criterion;
 import org.onosproject.net.flow.criteria.EthCriterion;
 import org.onosproject.net.flow.criteria.EthTypeCriterion;
+
+//Pumpking add it
+import org.onosproject.net.flow.criteria.IPCriterion;
+
 import org.onosproject.net.flow.criteria.ExtensionCriterion;
 import org.onosproject.net.flow.criteria.PortCriterion;
 import org.onosproject.net.flow.instructions.ExtensionTreatment;
@@ -80,8 +84,8 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
 
         Bmv2Configuration configuration = context.configuration();
         Bmv2Interpreter interpreter = context.interpreter();
-
-        int tableId = rule.tableId();
+        //TODO:根据已存储的信息（）
+        int tableId = rule.tableId();//2
         String tableName = interpreter.tableIdMap().get(tableId);
 
         Bmv2TableModel table = (tableName == null) ? configuration.table(tableId) : configuration.table(tableName);
@@ -92,6 +96,7 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
 
         /* Translate selector */
         Bmv2MatchKey bmv2MatchKey = buildMatchKey(interpreter, rule.selector(), table);
+        log.info("llrh|{} -*******-> {}",rule.selector().toString(),bmv2MatchKey.toString());
 
         /* Translate treatment */
         TrafficTreatment treatment = rule.treatment();
@@ -173,6 +178,7 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
         return tableEntryBuilder.build();
     }
 
+
     private Bmv2TernaryMatchParam buildTernaryParam(Bmv2FieldModel field, Criterion criterion, int bitWidth)
             throws Bmv2FlowRuleTranslatorException {
 
@@ -186,6 +192,7 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
             case IN_PORT:
                 long port = ((PortCriterion) criterion).port().toLong();
                 value = ImmutableByteSequence.copyFrom(port);
+                System.out.println("IN_PORT");
                 break;
             case ETH_DST:
                 EthCriterion c = (EthCriterion) criterion;
@@ -193,6 +200,7 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
                 if (c.mask() != null) {
                     mask = ImmutableByteSequence.copyFrom(c.mask().toBytes());
                 }
+                System.out.println("ETH_DST");
                 break;
             case ETH_SRC:
                 EthCriterion c2 = (EthCriterion) criterion;
@@ -200,13 +208,33 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
                 if (c2.mask() != null) {
                     mask = ImmutableByteSequence.copyFrom(c2.mask().toBytes());
                 }
+                System.out.println("ETH_SRC");
                 break;
             case ETH_TYPE:
                 short ethType = ((EthTypeCriterion) criterion).ethType().toShort();
                 value = ImmutableByteSequence.copyFrom(ethType);
+                System.out.println("ETH_TYPE");
                 break;
             // TODO: implement building for other criterion types (easy with DefaultCriterion of ONOS-4034)
+            case IPV4_DST:
+                System.out.print("IPV4_DST");
+                IPCriterion c3 = (IPCriterion) criterion;
+                value=ImmutableByteSequence.copyFrom(c3.ip().address().toOctets());
+                //Len  => mask
+                long mymask=0;
+                int prefixLength=c3.ip().prefixLength();
+                for(int offset=0;offset<prefixLength;offset++){
+                    mymask=(mymask<<1)+1;
+                }
+                for(int offset=prefixLength;offset<32;offset++){
+                    mymask=(mymask<<1);
+                }
+                System.out.println("prefixLength="+prefixLength+"mymask="+mymask);
+                mask=ImmutableByteSequence.copyFrom(mymask);
+                break;
+
             default:
+                System.out.println("NOT FOUND");
                 throw new Bmv2FlowRuleTranslatorException("Feature not implemented, ternary builder for criterion" +
                                                                   "type: " + criterion.type().name());
         }
@@ -277,6 +305,7 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
 
             int bitWidth = keyModel.field().type().bitWidth();
             int byteWidth = roundToBytes(bitWidth);
+            //System.out.println("byteWidth="+byteWidth);
 
             Criterion.Type criterionType = interpreter.criterionTypeMap().inverse().get(fieldName);
 
@@ -288,10 +317,12 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
                         // Wildcard field
                         matchKeyBuilder.withWildcard(byteWidth);
                         break;
+
                     case LPM:
                         // LPM with prefix 0
                         matchKeyBuilder.add(new Bmv2LpmMatchParam(ImmutableByteSequence.ofZeros(byteWidth), 0));
                         break;
+
                     default:
                         throw new Bmv2FlowRuleTranslatorException("No value found for required match field "
                                                                           + fieldName);
@@ -302,7 +333,8 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
 
             Bmv2MatchParam matchParam;
 
-            if (extParamMap.containsKey(fieldName)) {
+            if (extParamMap.containsKey(fieldName))
+            {
                 // Parameter found in extension
                 if (criterionType != null && selector.getCriterion(criterionType) != null) {
                     // Found also a criterion that can be mapped. This is bad.
@@ -322,14 +354,17 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
                 int foundByteWidth;
                 switch (keyModel.matchType()) {
                     case EXACT:
+                        log.info("X-EXACT-X");
                         Bmv2ExactMatchParam m1 = (Bmv2ExactMatchParam) matchParam;
                         foundByteWidth = m1.value().size();
                         break;
                     case TERNARY:
+                        log.info("X-TENERAY-X");
                         Bmv2TernaryMatchParam m2 = (Bmv2TernaryMatchParam) matchParam;
                         foundByteWidth = m2.value().size();
                         break;
                     case LPM:
+                        log.info("X-LPM-X");
                         Bmv2LpmMatchParam m3 = (Bmv2LpmMatchParam) matchParam;
                         foundByteWidth = m3.value().size();
                         break;
@@ -346,14 +381,27 @@ public class Bmv2FlowRuleTranslatorImpl implements Bmv2FlowRuleTranslator {
                                                                       + foundByteWidth);
                 }
 
-            } else {
+            }
+            else
+            {
                 // A criterion mapping is available for this key
                 Criterion criterion = selector.getCriterion(criterionType);
                 translatedCriteria.add(criterion);
                 switch (keyModel.matchType()) {
                     case TERNARY:
+                        System.out.println("TERNARY!");
                         matchParam = buildTernaryParam(keyModel.field(), criterion, bitWidth);
                         break;
+
+                    case LPM:
+                        System.out.println("LPM!");
+
+                        IPCriterion c4 = (IPCriterion) criterion;
+                        ImmutableByteSequence value=ImmutableByteSequence.copyFrom(c4.ip().address().toOctets());
+                        int prefixLength=c4.ip().prefixLength();
+                        matchParam=new Bmv2LpmMatchParam(value,prefixLength);
+                        break;
+
                     default:
                         // TODO: implement other match param builders (exact, LPM, etc.)
                         throw new Bmv2FlowRuleTranslatorException("Feature not yet implemented, match param builder: "

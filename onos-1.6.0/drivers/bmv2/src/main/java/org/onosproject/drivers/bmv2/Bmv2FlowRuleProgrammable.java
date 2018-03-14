@@ -16,16 +16,13 @@
 
 package org.onosproject.drivers.bmv2;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onlab.osgi.ServiceNotFoundException;
-import org.onosproject.bmv2.api.context.Bmv2Configuration;
-import org.onosproject.bmv2.api.context.Bmv2DeviceContext;
-import org.onosproject.bmv2.api.context.Bmv2FlowRuleTranslator;
-import org.onosproject.bmv2.api.context.Bmv2FlowRuleTranslatorException;
-import org.onosproject.bmv2.api.context.Bmv2Interpreter;
-import org.onosproject.bmv2.api.context.Bmv2TableModel;
+import org.onosproject.bmv2.api.context.*;
 import org.onosproject.bmv2.api.runtime.Bmv2DeviceAgent;
 import org.onosproject.bmv2.api.runtime.Bmv2FlowRuleWrapper;
 import org.onosproject.bmv2.api.runtime.Bmv2MatchKey;
@@ -45,6 +42,8 @@ import org.onosproject.net.flow.FlowRuleProgrammable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -197,6 +196,7 @@ public class Bmv2FlowRuleProgrammable extends AbstractHandlerBehaviour implement
         return processFlowRules(rules, Operation.REMOVE);
     }
 
+
     private Collection<FlowRule> processFlowRules(Collection<FlowRule> rules, Operation operation) {
 
         if (!init()) {
@@ -212,17 +212,13 @@ public class Bmv2FlowRuleProgrammable extends AbstractHandlerBehaviour implement
             log.error("Failed to get BMv2 device agent: {}", e.explain());
             return Collections.emptyList();
         }
-
         Bmv2DeviceContext context = contextService.getContext(deviceId);
         if (context == null) {
             log.error("Unable to get device context for {}", deviceId);
             return Collections.emptyList();
         }
-
         Bmv2FlowRuleTranslator translator = tableEntryService.getFlowRuleTranslator();
-
         List<FlowRule> processedFlowRules = Lists.newArrayList();
-
         for (FlowRule rule : rules) {
 
             Bmv2TableEntry bmv2Entry;
@@ -230,7 +226,7 @@ public class Bmv2FlowRuleProgrammable extends AbstractHandlerBehaviour implement
             try {
                 bmv2Entry = translator.translate(rule, context);
             } catch (Bmv2FlowRuleTranslatorException e) {
-                log.warn("Unable to translate flow rule: {} - {}", e.getMessage(), rule);
+                log.warn("Unable to translate flow rule: {} - {} *****-----{} *******---- {}", e.getMessage(), rule,context.configuration().json().toString(),deviceId.toString());
                 continue; // next rule
             }
 

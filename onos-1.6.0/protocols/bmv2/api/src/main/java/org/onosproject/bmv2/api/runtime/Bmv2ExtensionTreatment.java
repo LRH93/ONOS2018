@@ -201,7 +201,9 @@ public final class Bmv2ExtensionTreatment extends AbstractExtension implements E
          * @return this
          */
         public Builder addParameter(String parameterName, int value) {
+            //System.out.println("parameterName="+parameterName+"   value="+value);
             this.parameters.put(parameterName, copyFrom(bb(value)));
+            //System.out.println("Success");
             return this;
         }
 
@@ -241,32 +243,58 @@ public final class Bmv2ExtensionTreatment extends AbstractExtension implements E
          */
         public Bmv2ExtensionTreatment build() {
             checkNotNull(configuration, "configuration cannot be null");
+            //System.out.println("configuration is ok");
             checkNotNull(actionName, "action name cannot be null");
+            //System.out.println("actionName is ok");
 
             Bmv2ActionModel actionModel = configuration.action(actionName);
 
             checkNotNull(actionModel, "no such an action in configuration", actionName);
+            //System.out.println("actionModel.runtimeDatas().size()="+actionModel.runtimeDatas().size());
+            //System.out.println("parameters.size()"+parameters.size());
             checkArgument(actionModel.runtimeDatas().size() == parameters.size(),
                           "invalid number of parameters", actionName);
+            //System.out.println("actionModel is ok");
 
             List<ImmutableByteSequence> newParameters = new ArrayList<>(parameters.size());
             List<String> parameterNames = new ArrayList<>(parameters.size());
+            //System.out.println("List is ok");
 
-            for (String parameterName : parameters.keySet()) {
-                Bmv2RuntimeDataModel runtimeData = actionModel.runtimeData(parameterName);
-                checkNotNull(runtimeData, "no such an action parameter in configuration",
-                             actionName + "->" + runtimeData.name());
-                int bitWidth = runtimeData.bitWidth();
-                try {
-                    ImmutableByteSequence newSequence = fitByteSequence(parameters.get(parameterName), bitWidth);
-                    int idx = actionModel.runtimeDatas().indexOf(runtimeData);
-                    newParameters.add(idx, newSequence);
-                    parameterNames.add(idx, parameterName);
-                } catch (Bmv2TranslatorUtils.ByteSequenceFitException e) {
-                    throw new IllegalArgumentException(e.getMessage() +
-                                                               " [" + actionName + "->" + runtimeData.name() + "]");
+            int counter=0;
+            int size=parameters.size();
+            while(counter<=size-1){
+                for (String parameterName : parameters.keySet()) {
+                    Bmv2RuntimeDataModel runtimeData = actionModel.runtimeData(parameterName);
+                    checkNotNull(runtimeData, "no such an action parameter in configuration",
+                            actionName + "->" + runtimeData.name());
+                    //System.out.println("runtimeData is ok");
+                    int bitWidth = runtimeData.bitWidth();
+                    //System.out.println("bitWidth is ok");
+                    try {
+                        ImmutableByteSequence newSequence = fitByteSequence(parameters.get(parameterName), bitWidth);
+                        //System.out.println("newSequence is ok");
+                        int idx = actionModel.runtimeDatas().indexOf(runtimeData);
+                        //System.out.println("newParameters.size()="+newParameters.size());
+                        //System.out.println("idx="+idx);
+
+                        if(idx==counter){
+                            //TODO：add只能从0，1,2,3...从小到大
+                            newParameters.add(idx, newSequence);
+                            //System.out.println("add newSequence is ok");
+                            parameterNames.add(idx, parameterName);
+                            //System.out.println("add parameterName is ok");
+                            counter++;
+                        }
+
+                    } catch (Bmv2TranslatorUtils.ByteSequenceFitException e) {
+                        throw new IllegalArgumentException(e.getMessage() +
+                                " [" + actionName + "->" + runtimeData.name() + "]");
+                    }
                 }
             }
+
+
+            //System.out.println("for keySet() is ok");
 
             return new Bmv2ExtensionTreatment(new Bmv2Action(actionName, newParameters), parameterNames);
         }

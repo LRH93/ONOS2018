@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1520985062371
+Build-Jdk: 1.8.0_121
+Built-By: root
+Bundle-Description: ONOS BMv2 packet provider
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: onos-bmv2-provider-packet
+Bundle-SymbolicName: org.onosproject.onos-bmv2-provider-packet
+Bundle-Version: 1.6.0
+Created-By: Apache Maven Bundle Plugin
+Import-Package: 
+ org.onlab.packet;version="[1.6,2)",
+ org.onlab.util;version="[1.6,2)",
+ org.onosproject.bmv2.api.runtime;version="[1.6,2)",
+ org.onosproject.bmv2.api.service;version="[1.6,2)",
+ org.onosproject.core;version="[1.6,2)",
+ org.onosproject.net;version="[1.6,2)",
+ org.onosproject.net.device;version="[1.6,2)",
+ org.onosproject.net.driver;version="[1.6,2)",
+ org.onosproject.net.flow;version="[1.6,2)",
+ org.onosproject.net.flow.instructions;version="[1.6,2)",
+ org.onosproject.net.packet;version="[1.6,2)",
+ org.onosproject.net.provider;version="[1.6,2)",
+ org.slf4j;version="[1.7,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Service-Component: OSGI-INF/org.onosproject.provider.bmv2.packet.impl.Bm
+ v2PacketProvider.xml
+Tool: Bnd-3.0.0.201509101326

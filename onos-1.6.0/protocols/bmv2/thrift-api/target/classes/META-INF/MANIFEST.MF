@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1521027546427
+Build-Jdk: 1.8.0_121
+Built-By: root
+Bundle-Description: BMv2 protocol subsystem
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: onos-bmv2-protocol-thrift-api
+Bundle-SymbolicName: org.onosproject.onos-bmv2-protocol-thrift-api
+Bundle-Version: 1.6.0
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.onosproject.bmv2.thriftapi;uses:="org.apache.thrift,
+ org.apache.thrift.async,org.apache.thrift.meta_data,org.apache.thrift.p
+ rotocol,org.apache.thrift.server,org.apache.thrift.transport";version="
+ 1.6.0"
+Import-Package: 
+ org.apache.thrift;version="[0.9,1)",
+ org.apache.thrift.async;version="[0.9,1)",
+ org.apache.thrift.meta_data;version="[0.9,1)",
+ org.apache.thrift.protocol;version="[0.9,1)",
+ org.apache.thrift.scheme;version="[0.9,1)",
+ org.apache.thrift.server;version="[0.9,1)",
+ org.apache.thrift.transport;version="[0.9,1)",
+ org.slf4j;version="[1.7,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-3.0.0.201509101326

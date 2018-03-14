@@ -38,7 +38,8 @@ import static org.onosproject.net.flow.instructions.Instructions.OutputInstructi
  */
 public final class Bmv2DefaultInterpreterImpl implements Bmv2Interpreter {
 
-    public static final String TABLE0 = "table0";
+    public static final String TABLE0 = "fwd";
+    public static final String TABLE1 = "table1";
     public static final String SEND_TO_CPU = "send_to_cpu";
     public static final String PORT = "port";
     public static final String DROP = "_drop";
@@ -48,10 +49,14 @@ public final class Bmv2DefaultInterpreterImpl implements Bmv2Interpreter {
             Criterion.Type.IN_PORT, "standard_metadata.ingress_port",
             Criterion.Type.ETH_DST, "ethernet.dstAddr",
             Criterion.Type.ETH_SRC, "ethernet.srcAddr",
-            Criterion.Type.ETH_TYPE, "ethernet.etherType");
+            Criterion.Type.ETH_TYPE, "ethernet.etherType",
+            Criterion.Type.IPV4_DST, "ipv4.dstAddr");
 
+    //TODO:存储tableID[整型，第几个表] -》 tableName[字符串，表的名字]
     private static final ImmutableBiMap<Integer, String> TABLE_MAP = ImmutableBiMap.of(
-            0, TABLE0);
+            //0, TABLE0,
+	    	//1, TABLE1
+    );
 
     @Override
     public ImmutableBiMap<Criterion.Type, String> criterionTypeMap() {
@@ -112,6 +117,7 @@ public final class Bmv2DefaultInterpreterImpl implements Bmv2Interpreter {
     }
 
     private Bmv2Action actionWithName(String name) {
+	    System.out.println(Bmv2Action.builder().withName(name).build().toString());
         return Bmv2Action.builder().withName(name).build();
     }
 }
