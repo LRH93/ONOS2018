@@ -83,9 +83,9 @@ function compile(){
 	export file=$1
 	p4c-bmv2 --json $file.json $file.p4
 
-	scp $file.json /root/ONOS1.6.0/onos-1.6.0/protocols/bmv2/ctl/src/main/resources/$file.json
-	scp $file.json /root/ONOS1.6.0/onos-1.6.0/apps/fwd/src/main/resources/$file.json	
-	scp $file.json /root/ONOS1.6.0/onos-1.6.0/drivers/bmv2/src/main/resources/$file.json
+	scp $file.json $ONOS_ROOT/protocols/bmv2/ctl/src/main/resources/$file.json
+	scp $file.json $ONOS_ROOT/apps/fwd/src/main/resources/$file.json	
+	scp $file.json $ONOS_ROOT/drivers/bmv2/src/main/resources/$file.json
 
 	#文件太多了，删点吧
 	rm $file.json
@@ -133,7 +133,7 @@ p4onos() {
 	cd
 	echo "BMv2 ok!"
 	echo "app activate org.onosproject.drivers.bmv2"
-	echo "cd /root/onos-p4-dev/onos-bmv2/targets/simple_switch"
+	echo "cd /root/onos/onos-p4-dev/onos-bmv2/targets/simple_switch"
 	echo "sudo -E mn --custom $BMV2_PY --switch onosbmv2 --controller remote,ip=127.0.0.1,port=40123"
 
 	ok clean
@@ -195,7 +195,7 @@ core() {
 }
 
 log(){
-	cd /root/onos/karaf/apache-karaf-3.0.8
+	cd /root/onos/Applications/apache-karaf-3.0.8
 	tailf data/log/karaf.log
 }
 

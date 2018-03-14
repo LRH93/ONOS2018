@@ -454,16 +454,44 @@
             "order": [
                 "ethernet",
                 "ipv4",
-                "get",
-                "data"
+                "data",
+                "get"
             ]
         }
     ],
     "meter_arrays": [],
     "actions": [
         {
-            "name": "set_ip",
+            "name": "set_egress_port",
             "id": 0,
+            "runtime_data": [
+                {
+                    "name": "port",
+                    "bitwidth": 9
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "set_ip",
+            "id": 1,
             "runtime_data": [
                 {
                     "name": "ip",
@@ -491,7 +519,7 @@
         },
         {
             "name": "send_to_cpu",
-            "id": 1,
+            "id": 2,
             "runtime_data": [],
             "primitives": [
                 {
@@ -514,40 +542,12 @@
         },
         {
             "name": "_drop",
-            "id": 2,
+            "id": 3,
             "runtime_data": [],
             "primitives": [
                 {
                     "op": "drop",
                     "parameters": []
-                }
-            ]
-        },
-        {
-            "name": "set_egress_port",
-            "id": 3,
-            "runtime_data": [
-                {
-                    "name": "port",
-                    "bitwidth": 9
-                }
-            ],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "standard_metadata",
-                                "egress_spec"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 0
-                        }
-                    ]
                 }
             ]
         },

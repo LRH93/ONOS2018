@@ -390,8 +390,8 @@
             "order": [
                 "ethernet",
                 "ipv4",
-                "get",
-                "myregister"
+                "myregister",
+                "get"
             ]
         }
     ],

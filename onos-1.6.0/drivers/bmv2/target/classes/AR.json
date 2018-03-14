@@ -500,9 +500,9 @@
             "order": [
                 "ethernet",
                 "ipv4",
-                "data",
                 "get",
-                "myregister"
+                "myregister",
+                "data"
             ]
         }
     ],

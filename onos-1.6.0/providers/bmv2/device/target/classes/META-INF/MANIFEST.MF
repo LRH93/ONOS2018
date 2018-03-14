@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1520985060761
+Bnd-LastModified: 1521031491150
 Build-Jdk: 1.8.0_121
 Built-By: root
 Bundle-Description: ONOS BMv2 device provider

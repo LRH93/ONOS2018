@@ -462,13 +462,30 @@
     "meter_arrays": [],
     "actions": [
         {
-            "name": "_drop",
+            "name": "set_ip",
             "id": 0,
-            "runtime_data": [],
+            "runtime_data": [
+                {
+                    "name": "ip",
+                    "bitwidth": 32
+                }
+            ],
             "primitives": [
                 {
-                    "op": "drop",
-                    "parameters": []
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "ipv4",
+                                "dstAddr"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
                 }
             ]
         },
@@ -501,30 +518,13 @@
             ]
         },
         {
-            "name": "set_ip",
+            "name": "_drop",
             "id": 2,
-            "runtime_data": [
-                {
-                    "name": "ip",
-                    "bitwidth": 32
-                }
-            ],
+            "runtime_data": [],
             "primitives": [
                 {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "ipv4",
-                                "dstAddr"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 0
-                        }
-                    ]
+                    "op": "drop",
+                    "parameters": []
                 }
             ]
         },

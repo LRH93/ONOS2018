@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1521027525805
+Bnd-LastModified: 1521031476822
 Build-Jdk: 1.8.0_121
 Built-By: root
 Bundle-Description: BMv2 protocol subsystem
@@ -10,14 +10,14 @@ Bundle-SymbolicName: org.onosproject.onos-bmv2-protocol-api
 Bundle-Version: 1.6.0
 Created-By: Apache Maven Bundle Plugin
 Export-Package: 
- org.onosproject.bmv2.api.utils;uses:="org.onlab.util";version="1.6.0",
- org.onosproject.bmv2.api.service;uses:="org.onlab.util,org.onosproject.
- bmv2.api.context,org.onosproject.bmv2.api.runtime,org.onosproject.net";
- version="1.6.0",
  org.onosproject.bmv2.api.runtime;uses:="org.apache.commons.lang3.tuple,
  org.onlab.util,org.onosproject.bmv2.api.context,org.onosproject.net,org
  .onosproject.net.flow,org.onosproject.net.flow.criteria,org.onosproject
  .net.flow.instructions";version="1.6.0",
+ org.onosproject.bmv2.api.utils;uses:="org.onlab.util";version="1.6.0",
+ org.onosproject.bmv2.api.service;uses:="org.onlab.util,org.onosproject.
+ bmv2.api.context,org.onosproject.bmv2.api.runtime,org.onosproject.net";
+ version="1.6.0",
  org.onosproject.bmv2.api.context;uses:="com.eclipsesource.json,com.goog
  le.common.collect,org.onosproject.bmv2.api.runtime,org.onosproject.net.
  flow,org.onosproject.net.flow.criteria";version="1.6.0"
